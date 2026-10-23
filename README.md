@@ -1,16 +1,60 @@
-# Meshly
+<p align="center">
+  <img src="docs/banner.png" alt="Meshly: message anyone nearby. No internet. No SIM. No servers." />
+</p>
 
-**An off-grid, end-to-end encrypted messenger that works over Bluetooth only.**
-No internet, no SIM card, no servers, no accounts. Phones talk directly to each other over
-Bluetooth Low Energy (BLE). It has a retro hacker-terminal look. The app is called **BLACKBOX**.
-
-Built with React Native + Expo for **Android and iOS**.
+<h3 align="center">An off-grid, end-to-end encrypted messenger that runs on Bluetooth alone.</h3>
 
 <p align="center">
-  <img src="docs/screenshots/01-boot.png" width="220" alt="Boot sequence" />
-  <img src="docs/screenshots/04-radar.png" width="220" alt="Radar with nearby nodes" />
-  <img src="docs/screenshots/05-chat.png" width="220" alt="Encrypted one-to-one chat" />
+  <img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS-33ff66?style=for-the-badge&labelColor=020802" alt="Android and iOS" />
+  <img src="https://img.shields.io/badge/internet-not%20required-ffb000?style=for-the-badge&labelColor=020802" alt="No internet required" />
+  <img src="https://img.shields.io/badge/encryption-end--to--end-4dfff3?style=for-the-badge&labelColor=020802" alt="End-to-end encrypted" />
+  <br />
+  <img src="https://img.shields.io/badge/Expo-SDK%2058-33ff66?style=flat-square&logo=expo&logoColor=white&labelColor=020802" alt="Expo SDK 58" />
+  <img src="https://img.shields.io/badge/React%20Native-0.88-33ff66?style=flat-square&logo=react&logoColor=white&labelColor=020802" alt="React Native 0.88" />
+  <img src="https://img.shields.io/badge/TypeScript-strict-33ff66?style=flat-square&logo=typescript&logoColor=white&labelColor=020802" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/license-MIT-33ff66?style=flat-square&labelColor=020802" alt="MIT license" />
 </p>
+
+<p align="center">
+  <a href="#quick-start-try-it-without-a-phone"><b>Try it in your browser</b></a> ·
+  <a href="#features"><b>Features</b></a> ·
+  <a href="#security-model"><b>Security</b></a> ·
+  <a href="#build-for-real-phones"><b>Build</b></a>
+</p>
+
+---
+
+<table>
+<tr>
+<td width="42%" align="center">
+  <img src="docs/demo.gif" width="300" alt="Demo: boot sequence, radar, encrypted chat" />
+</td>
+<td>
+
+### No signal? Still talking.
+
+Meshly turns your phone into a Bluetooth radio terminal. It finds people nearby who run the app
+and lets you message them directly, phone to phone. No cell towers, Wi-Fi, accounts or servers.
+
+**Good for**
+- 🎪 Festivals, stadiums and concerts where the network is jammed
+- ⛰️ Hiking, camping and road trips with no coverage
+- ✈️ Flights, subways and basements
+- 🆘 Power cuts and disasters when networks go down
+- 🕶️ Talking privately with the people in the same room
+
+**What makes it different**
+- 🔐 Every message is end-to-end encrypted
+- 👥 Group channels of up to 8 people
+- 📡 Live radar that shows who's in range
+- 🧪 Simulation mode, so you can try it with zero hardware
+
+</td>
+</tr>
+</table>
+
+> The app is called **BLACKBOX** inside. It has a retro hacker-terminal look, complete with a
+> boot sequence and CRT scanlines.
 
 ---
 
@@ -152,6 +196,10 @@ src/screens/              Boot, Identity, Link, Radar, Chat, NewGroup
 | Lost or stolen phone | Keys in the Keystore/Keychain, encrypted history, biometric/passcode app lock. |
 | Screenshots or screen recording | Blocked in release builds. Chats are hidden in the app switcher. |
 
+> ⚠️ **No independent audit yet.** Meshly uses well-known cryptography (NaCl / tweetnacl), but
+> the app itself hasn't been reviewed by security professionals. Don't rely on it where your
+> safety depends on it. Security reviews and reports are welcome.
+
 ## Limits
 
 - **Range:** about 10–30 m indoors, depending on the phones and walls.
@@ -169,6 +217,15 @@ src/screens/              Boot, Identity, Link, Radar, Chat, NewGroup
 
 React Native 0.88 · Expo SDK 58 · TypeScript · react-native-ble-plx · custom Expo native module
 (Kotlin / Swift) · tweetnacl · expo-secure-store · expo-local-authentication · expo-screen-capture
+
+## Contributing
+
+Ideas, bug reports and pull requests are welcome. Some good places to start:
+- Testing on more real Android and iOS devices
+- Relaying messages through other phones (multi-hop mesh)
+- Background mode, so messages arrive while the app is minimised
+
+If Meshly is useful or fun, a ⭐ helps other people find it.
 
 ## License
 
