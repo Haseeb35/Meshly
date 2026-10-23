@@ -169,3 +169,7 @@ src/screens/              Boot, Identity, Link, Radar, Chat, NewGroup
 
 React Native 0.88 · Expo SDK 58 · TypeScript · react-native-ble-plx · custom Expo native module
 (Kotlin / Swift) · tweetnacl · expo-secure-store · expo-local-authentication · expo-screen-capture
+
+## License
+
+[MIT](LICENSE) © 2026 Abdul Haseeb Dar
