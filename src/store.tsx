@@ -111,6 +111,18 @@ function append(list: Message[] | undefined, msg: Message) {
   return next.length > MAX_HISTORY ? next.slice(-MAX_HISTORY) : next;
 }
 
+/**
+ * A node id is only a short hash of the key, so a different key behind an id
+ * we already know is someone trying to take over that contact. The first key
+ * seen for an id is kept, and anything signed with another one is refused.
+ */
+function keyConflict(s: Pick<State, 'peers' | 'groups'>, nodeId: string, publicKey: string) {
+  const known =
+    s.peers[nodeId]?.publicKey ??
+    Object.values(s.groups).flatMap((g) => g.members).find((m) => m.n === nodeId)?.k;
+  return known != null && known !== publicKey;
+}
+
 /** Roster entries must have a key that matches their node id. */
 function validRoster(m: unknown): RosterEntry[] | null {
   if (!Array.isArray(m) || m.length > MAX_GROUP) return null;
@@ -129,6 +141,7 @@ function validRoster(m: unknown): RosterEntry[] | null {
 function receive(s: State, { from, inner }: Incoming, activeKey: string | null): State {
   const me = s.identity;
   if (!me || from.nodeId === me.nodeId) return s;
+  if (keyConflict(s, from.nodeId, from.publicKey)) return s;
 
   // Shape checks: everything below came from another device.
   if (typeof inner?.i !== 'string' || inner.i.length > 40) return s;
@@ -163,9 +176,15 @@ function receive(s: State, { from, inner }: Incoming, activeKey: string | null):
     const id = typeof inner.g.id === 'string' ? inner.g.id.slice(0, 24) : '';
     if (!roster || !id) return { ...s, seen };
     const known = s.groups[id];
-    // Only accept group traffic from members, and only for groups we're in.
-    const senderListed = roster.some((r) => r.n === from.nodeId) || known?.members.some((r) => r.n === from.nodeId);
+    // Only accept group traffic from members, and only for groups we're in. Once we know a
+    // group, its membership is our own list: a roster the sender made up can't add them to it.
+    const senderListed = known
+      ? known.members.some((r) => r.n === from.nodeId)
+      : roster.some((r) => r.n === from.nodeId);
     if (!senderListed || !roster.some((r) => r.n === me.nodeId)) return { ...s, seen };
+    // Roster keys must match the keys we already hold for those people.
+    if (roster.some((r) => r.n !== me.nodeId && keyConflict(s, r.n, r.k))) return { ...s, seen };
+    if (roster.some((r) => r.n === me.nodeId && r.k !== me.publicKey)) return { ...s, seen };
 
     const key = groupKey(id);
     let members = known ? [...known.members] : roster;
@@ -219,6 +238,7 @@ function reducer(s: State, a: Action): State {
         : { ...s, mode: null, link: a.link, linkError: a.error ?? null, ...empty, sending: {} };
     case 'peer': {
       const prev = s.peers[a.peer.nodeId];
+      if (keyConflict(s, a.peer.nodeId, a.peer.publicKey)) return s;
       return {
         ...s,
         peers: {

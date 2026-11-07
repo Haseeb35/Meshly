@@ -35,6 +35,11 @@ class BlePeripheralModule : Module() {
   private var profileValue: ByteArray = ByteArray(0)
   private val preparedWrites = HashMap<String, ByteArrayOutputStream>()
 
+  // A long write rebuilds one attribute value, which BLE caps at 512 bytes. Bounding the
+  // buffers stops a nearby device from streaming data until the app runs out of memory.
+  private val maxPreparedBytes = 512
+  private val maxPreparedDevices = 16
+
   private val context: Context
     get() = appContext.reactContext ?: throw IllegalStateException("No React context")
 
@@ -187,7 +192,15 @@ class BlePeripheralModule : Module() {
         return
       }
       if (preparedWrite) {
-        preparedWrites.getOrPut(device.address) { ByteArrayOutputStream() }.write(value)
+        val pending = preparedWrites[device.address]
+        if ((pending == null && preparedWrites.size >= maxPreparedDevices) ||
+          (pending?.size() ?: 0) + value.size > maxPreparedBytes
+        ) {
+          preparedWrites.remove(device.address)
+          if (responseNeeded) server.sendResponse(device, requestId, BluetoothGatt.GATT_INVALID_ATTRIBUTE_LENGTH, offset, null)
+          return
+        }
+        (pending ?: ByteArrayOutputStream().also { preparedWrites[device.address] = it }).write(value)
       } else {
         emitWrite(device, value)
       }
