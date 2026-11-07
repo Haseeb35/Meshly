@@ -9,13 +9,13 @@
     "backgroundColor": "#020802",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "pk.superapp.blackbox",
+      "bundleIdentifier": "io.github.haseeb35.meshly",
       "infoPlist": {
         "NSBluetoothAlwaysUsageDescription": "BLACKBOX uses Bluetooth to find nearby phones and exchange messages without the internet."
       }
     },
     "android": {
-      "package": "pk.superapp.blackbox",
+      "package": "io.github.haseeb35.meshly",
       "adaptiveIcon": {
         "backgroundColor": "#020802",
         "foregroundImage": "./assets/android-icon-foreground.png",
